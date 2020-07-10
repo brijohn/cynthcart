@@ -125,6 +125,7 @@ midiRx = $6a ;106
 keyTestIndex = $6f ; 111
 keyPressedIntern = $70 ; 112
 shiftPressed = $72 ; 114
+mpuStatus = $02
 ; public addresses ======
 midiRingbufferReadIndex = $6c ;108
 midiRingbufferWriteIndex = $6d ;109

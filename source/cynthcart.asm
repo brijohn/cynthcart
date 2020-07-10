@@ -24,6 +24,7 @@ DEFAULT equ 0 ; Midi autodetect, SID2 at $DF00
 KERBEROS equ 1 ; Datel Midi, SID2 at $D420
 EMU equ 2 ; Midi disabled, SID2 at $D420
 SIDSYMPHONY equ 3 ; Midi disabled, SID2 at $DE00
+MPU401 equ 4 ; roland mpu401, SID2 at $D420
 ; -- - -- - -- - -- - -- - 
 ;;;DEVICE_CONFIG equ DEFAULT 		
 ; -- - -- - -- - -- - -- - 
@@ -242,6 +243,10 @@ ENABLE_MIDI_COMMANDS equ 0
 	IF DEVICE_CONFIG=SIDSYMPHONY
 SID2 equ $DE00
 ENABLE_MIDI_COMMANDS equ 0
+	ENDIF
+	IF DEVICE_CONFIG=MPU401
+SID2 equ $D420
+ENABLE_MIDI_COMMANDS equ 1
 	ENDIF
 	IF DEVICE_CONFIG=DEFAULT
 SID2 equ $DF00
@@ -1060,7 +1065,11 @@ nmiRestoreKey:
 	IF USE_DUMMY_MIDI_LIBRARY=1
 		include "cynthmidi_dummy.asm"
 	ELSE
-		include "cynthmidi.asm"
+		IF DEVICE_CONFIG=MPU401
+			include "cynthmpu401.asm"
+		ELSE
+			include "cynthmidi.asm"
+		ENDIF
 	ENDIF
 
 	

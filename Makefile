@@ -2,7 +2,7 @@
 DASM?=dasm
 PUCRUNCH?=pucrunch
 
-all: standard kerberos emulation symphony cartridge
+all: standard kerberos emulation symphony mpu401 cartridge
 
 standard:
 	$(DASM) source/cynthcart.asm -Isource -f3 -v1 -obin/cynthcart.prg -DMODE=1 -DDEVICE_CONFIG=0
@@ -15,6 +15,9 @@ emulation:
 
 symphony:
 	$(DASM) source/cynthcart.asm -Isource -f3 -v1 -obin/cynthcart_symphony.prg -DMODE=1 -DDEVICE_CONFIG=3
+
+mpu401:
+	$(DASM) source/cynthcart.asm -Isource -f3 -v1 -obin/cynthcart_mpu401.prg -DMODE=1 -DDEVICE_CONFIG=4
 
 cartridge:
 	$(DASM) source/cynthcart.asm -Isource -f3 -v1 -obin/cynthcartUncompressed.bin -DMODE=2 -DDEVICE_CONFIG=0

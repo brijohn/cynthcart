@@ -208,6 +208,7 @@ midiModeNames:
 	byte "PASSPORT" ;2
 	byte "   DATEL" ;3
 	byte "NAMESOFT" ;4
+	byte "  MPU401" ;5
 
 fxNames:
 	byte "NONE    " ;0
