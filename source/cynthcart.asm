@@ -10,7 +10,7 @@
 ;     ~~~==========================================================================================~~~
 
 ; IMAGE RUN MODES:
-CART_OBSOLETE equ 0 ; run at $8000 off cartridge ROM (No longer supported because the ROM is bigger than 8K)
+CART16 equ 0 ; run at $8000 off cartridge ROM (requires a 16k ROM image)
 DISK equ 1 ; run at $8000, include initial load location word (PRG format)
 RAM equ 2 ; run at $3000, needs to be copied or decompressed into $3000 (used for compresed version)
 KERNEL_OBSOLETE equ 3 ; set up as replacement for 8k BASIC section of KERNEL (No longer supported because the ROM is bigger than 8K)
@@ -290,7 +290,7 @@ BASEADDR equ 2047 ; 2047 = $7FF
 
 	;==================================================
 	; straight cart ROM
-	IF MODE=CART_OBSOLETE
+	IF MODE=CART16
 BASEADDR equ $8000
 	org BASEADDR
 	word Startup
@@ -406,51 +406,8 @@ initSid:	sta $d400,x
 	;=- =- =- =- =- =- =- =- =- =- =- =- =- =- 
 
 skipTest:
-	
-	; Copy program into RAM if running from cartridge...
-	IF MODE=CART_OBSOLETE
-	ldx #0
-RAMTextCopy:
-	lda RAMText,x
-	beq quitRAMTextCopy
-	cmp #64
-	bmi showSpaceRAM
-	sbc #64
-showSpaceRAM
-	sta 1024,x
-	inx
-	jmp RAMTextCopy
-RAMText:
-	byte "COPYING TO RAM...",0
-quitRAMTextCopy:
-	;------------
-	ldx #8*4
-	lda #<copyStart
-	sta copyPtrS
-	lda #>copyStart
-	sta copyPtrS+1
-	lda #<ramStart
-	sta copyPtrD
-	lda #>ramStart
-	sta copyPtrD+1
-ramCopy1:
-	ldy #0
-ramCopy2:
-	lda (copyPtrS),y
-	sta (copyPtrD),y
-	dey
-	bne ramCopy2
-	inc copyPtrS+1
-	inc copyPtrD+1
-	dex
-	bne ramCopy1
-	jmp ramStart
-copyStart:
-	rorg $3000 ; RAM destination
-ramStart:	
-	ENDIF
 
-	IF MODE=CART_OBSOLETE
+	IF MODE=CART16
 	; System Startup Stuff
 	; (not needed if starting from disk)
 	sei
