@@ -21,20 +21,36 @@ MIDICMD  equ $df01            ; MPU-401 Command Port
 
 ; No detection. This file specifically implements mpu 401 support
 midiDetect:
+	lda #0
+	sta mpuStatus
+	lda MIDISTAT
+	cmp #$FF
+	beq noMidi
+	and #$c0
+	cmp #$80
+	bne noMidi
+	lda mpuStatus
+	ora #1
+	sta mpuStatus
 	lda #$5
+	rts
+noMidi:
+	lda #0
 	rts
 
 
 midiInit:
-	sei
 
 	; clear ringbuffer
 	lda #0
 	sta midiRingbufferReadIndex
 	sta midiRingbufferWriteIndex
-	sta mpuStatus
 
+	lda mpuStatus
+	and #01
+	beq notInstalled
 	; Set IRQ routine
+	sei
 	lda #<midiIrq
 	sta $0314
 	lda #>midiIrq
@@ -44,9 +60,14 @@ midiInit:
 	jsr midiCmd
 	lda #$3F ; MPU UART Mode
 	jsr midiCmd
+
+notInstalled:
 	rts
 
 midiRelease:
+	lda mpuStatus
+	and #01
+	beq notInstalled
 	lda #$FF ; Send MPU reset
 	jsr midiCmd
 	sei
