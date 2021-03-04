@@ -341,6 +341,16 @@ Startup:
 	lda #193
 	sta 792
 	
+	IF MODE=CART16
+	; System Startup Stuff
+	; (not needed if starting from disk)
+	sei
+	jsr $FF84 ; initialize I/O devices
+	jsr $FF87 ; initalise memory pointers
+	jsr $FF8A ; restore I/O vectors
+	jsr $FF81 ; initalise screen and keyboard
+	cli
+	ENDIF
 	; clear screen and show info
 ;	ldx #0
 ;	stx $d020
@@ -407,16 +417,6 @@ initSid:	sta $d400,x
 
 skipTest:
 
-	IF MODE=CART16
-	; System Startup Stuff
-	; (not needed if starting from disk)
-	sei
-	jsr $FF84 ; initialize I/O devices
-	jsr $FF87 ; initalise memory pointers
-	jsr $FF8A ; restore I/O vectors
-	jsr $FF81 ; initalise screen and keyboard
-	cli
-	ENDIF
 
 	IF MODE=KERNEL_OBSOLETE
 	org $A483
